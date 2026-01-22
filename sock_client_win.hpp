@@ -24,13 +24,16 @@ class sock_client_win {
                 *ptr = NULL,
                 hints;
 
+        int recvbuflen = DEFAULT_BUFLEN;
+
+        const char *sendbuf = "this is a test";
+        char recvbuf[DEFAULT_BUFLEN];
         // W I N S O C K
         int winsock_init();
 
     public:
         sock_client_win() {
             iResult = winsock_init();
-
         }
 
         // S O C K E T
