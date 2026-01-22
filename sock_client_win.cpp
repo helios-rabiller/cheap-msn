@@ -21,7 +21,7 @@ int sock_client_win::socket_init() { //Initialize use of WS2_32.dll
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the server address and port
-    iResult = getaddrinfo(argv[1], DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo("124.0.0.1", DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         printf("getaddrinfo failed: %d\n", iResult);
         WSACleanup();
@@ -73,14 +73,84 @@ int sock_client_win::socket_connect() {
     
 // S E N D  /  R E C E I V E
 int sock_client_win::socket_send() {
+    int recvbuflen = DEFAULT_BUFLEN;
 
+    const char *sendbuf = "this is a test";
+    char recvbuf[DEFAULT_BUFLEN];
+
+    // Send an initial buffer
+    iResult = send(ConnectSocket, sendbuf, (int) strlen(sendbuf), 0);
+    if (iResult == SOCKET_ERROR) {
+        printf("send failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    printf("Bytes Sent: %ld\n", iResult);int recvbuflen = DEFAULT_BUFLEN;
+
+    const char *sendbuf = "this is a test";
+    char recvbuf[DEFAULT_BUFLEN];
+
+    // Send an initial buffer
+    iResult = send(ConnectSocket, sendbuf, (int) strlen(sendbuf), 0);
+    if (iResult == SOCKET_ERROR) {
+        printf("send failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    printf("Bytes Sent: %ld\n", iResult);
+    return 0;
 }
 
 int sock_client_win::socket_receive() {
-            
+    int recvbuflen = DEFAULT_BUFLEN;
+
+    const char *sendbuf = "this is a test";
+    char recvbuf[DEFAULT_BUFLEN];
+
+    int iResult;
+
+    // Send an initial buffer
+    iResult = send(ConnectSocket, sendbuf, (int) strlen(sendbuf), 0);
+    if (iResult == SOCKET_ERROR) {
+        printf("send failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    printf("Bytes Sent: %ld\n", iResult);
+
+    // shutdown the connection for sending since no more data will be sent
+    // the client can still use the ConnectSocket for receiving data
+    iResult = shutdown(ConnectSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("shutdown failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+    return 0;
 }
 
 // D I S C O N N E C T
 int sock_client_win::socket_disconnect() {
+    // shutdown the connection for sending since no more data will be sent
+    // the client can still use the ConnectSocket for receiving data
+    iResult = shutdown(ConnectSocket, SD_SEND);
+    if (iResult == SOCKET_ERROR) {
+        printf("shutdown failed: %d\n", WSAGetLastError());
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+    
+    // cleanup
+    closesocket(ConnectSocket);
+    WSACleanup();
 
+    return 0;
 }
