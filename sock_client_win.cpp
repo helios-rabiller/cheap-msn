@@ -14,14 +14,14 @@ int sock_client_win::winsock_init() {
 }
 
 // S O C K E T
-int sock_client_win::socket_init() { //Initialize use of WS2_32.dll
+int sock_client_win::socket_init(const char *ip_adress) { //Initialize use of WS2_32.dll
     ZeroMemory(&hints, sizeof(hints));
     hints.ai_family   = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the server address and port
-    iResult = getaddrinfo("127.0.0.1", DEFAULT_PORT, &hints, &result);
+    iResult = getaddrinfo(ip_adress, DEFAULT_PORT, &hints, &result);
     if (iResult != 0) {
         printf("getaddrinfo failed: %d\n", iResult);
         WSACleanup();
@@ -50,7 +50,7 @@ int sock_client_win::socket_init() { //Initialize use of WS2_32.dll
 // C O N N E C T
 int sock_client_win::socket_connect() {
     // Connect to server.
-    iResult = connect( ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
+    iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
     if (iResult == SOCKET_ERROR) {
         closesocket(ConnectSocket);
         ConnectSocket = INVALID_SOCKET;// shutdown the send half of the connection since no more data will be sent
@@ -78,7 +78,7 @@ int sock_client_win::socket_connect() {
 }
     
 // S E N D  /  R E C E I V E
-int sock_client_win::socket_send() {
+int sock_client_win::socket_send(const char *sendbuf) {
     // Send an initial buffer
     iResult = send(ConnectSocket, sendbuf, (int) strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR) {
@@ -102,9 +102,9 @@ int sock_client_win::socket_send() {
     return 0;
 }
 
-int sock_client_win::socket_receive() {
+int sock_client_win::socket_receive(char *buffer) {
     do {
-        iResult = recv(ConnectSocket, recvbuf, recvbuflen, 0);
+        iResult = recv(ConnectSocket, buffer, DEFAULT_BUFLEN,0);
         if (iResult > 0)
             printf("Bytes received: %d\n", iResult);
         else if (iResult == 0)

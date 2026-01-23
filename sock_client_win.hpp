@@ -26,7 +26,6 @@ class sock_client_win {
 
         int recvbuflen = DEFAULT_BUFLEN;
 
-        const char *sendbuf = "this is a test";
         char recvbuf[DEFAULT_BUFLEN];
         // W I N S O C K
         int winsock_init();
@@ -37,14 +36,14 @@ class sock_client_win {
         }
 
         // S O C K E T
-        int socket_init();
+        int socket_init(const char *ip_adress);
 
         // C O N N E C T
         int socket_connect();
     
         // S E N D  /  R E C E I V E
-        int socket_send();
-        int socket_receive();
+        int socket_send(const char *sendbuf);
+        int socket_receive(char *buffer);
 
         // D I S C O N N E C T
         int socket_disconnect();
