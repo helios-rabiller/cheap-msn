@@ -15,11 +15,15 @@ Database::~Database() {
 }
 
 bool Database::connect(const string& host, const string& user, const string& pass, const string& dbname, int port) {
+    
+    unsigned int ssl_mode = SSL_MODE_REQUIRED;
+    mysql_options(conn, MYSQL_OPT_SSL_MODE, &ssl_mode);
+
     if (!mysql_real_connect(conn, host.c_str(), user.c_str(), pass.c_str(), dbname.c_str(), port, NULL, 0)) {
         cerr << "[Database] Erreur de connexion : " << mysql_error(conn) << endl;
         return false;
     }
-    cout << "[Database] Connecte a MySQL avec succes !" << endl;
+    cout << "[Database] Connecte a la BDD Cloud avec succes !" << endl;
     return true;
 }
 

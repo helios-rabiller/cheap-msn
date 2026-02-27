@@ -10,7 +10,8 @@ int main() {
     cout << "--- DEMARRAGE DU SERVEUR MSN ---" << endl;
 
     Database db;
-    if (!db.connect("127.0.0.1", "adminmsn", "aaa", "msn", 3306)) {
+    if (!db.connect("mysql-cheap-msn-cheap-msn.d.aivencloud.com", "avnadmin", "AVNS_7JbBHX7Ah1acptOnPf9", "defaultdb", 22408)){
+
         return 1; // Arrêt si la BDD plante
     }
     Server chatServer(8080, db);
