@@ -37,11 +37,9 @@ int main() {
     }
     cout << "Connecte au serveur MSN ! Tape tes messages." << endl;
 
-    // Lancer l'écoute dans un thread séparé
     thread receiver(receive_messages, clientSocket);
     receiver.detach();
 
-    // Boucle principale pour envoyer des messages
     string input;
     while (true) {
         cout << "> ";
